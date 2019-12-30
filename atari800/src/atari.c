@@ -279,6 +279,8 @@ int Atari800_LoadImage(const char *filename, UBYTE *buffer, int nbytes)
 	FILE *f;
 	int len;
 
+        Log_print("Reading image %s of size %d", filename, nbytes);
+
 	f = fopen(filename, "rb");
 	if (f == NULL) {
 		Log_print("Error loading ROM image: %s", filename);
@@ -298,6 +300,14 @@ int Atari800_LoadImage(const char *filename, UBYTE *buffer, int nbytes)
 		memcpy(MEMORY_os + (padding), emuos_h, 0x2000); \
 	} while (0)
 
+int Load5200BIOS(UBYTE* buffer)
+{
+   memcpy(buffer, a5200_bios, 2048);
+   Atari800_os_version = SYSROM_os_versions[Atari800_MACHINE_5200];
+
+   return TRUE;
+}
+
 static int load_roms(void)
 {
 	if (Atari800_machine_type != Atari800_MACHINE_5200 && emuos_mode == 2) {
@@ -307,8 +317,11 @@ static int load_roms(void)
 	else {
 		int basic_ver, xegame_ver;
 		SYSROM_ChooseROMs(Atari800_machine_type, MEMORY_ram_size, Atari800_tv_mode, &Atari800_os_version, &basic_ver, &xegame_ver);
-		if (Atari800_os_version == -1
-		    || !Atari800_LoadImage(SYSROM_roms[Atari800_os_version].filename, MEMORY_os, SYSROM_roms[Atari800_os_version].size)) {
+		//if (Atari800_os_version == -1
+		//    || !Atari800_LoadImage(SYSROM_roms[Atari800_os_version].filename, MEMORY_os, SYSROM_roms[Atari800_os_version].size)) 
+                if (!Load5200BIOS(MEMORY_os))
+                {
+                    
 			/* Missing OS ROM. */
 			Atari800_os_version = -1;
 			if (Atari800_machine_type != Atari800_MACHINE_5200 && emuos_mode == 1)

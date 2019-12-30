@@ -30,6 +30,8 @@ int pre_main(const char *argv)
    int i;
    bool Only1Arg;
 
+   Log_print("Command Line: %s", argv);
+
    parse_cmdline(argv); 
 
    Only1Arg = (strcmp(ARGUV[0],"prg") == 0) ? 0 : 1;

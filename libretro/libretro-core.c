@@ -14,8 +14,8 @@ cothread_t emuThread;
 int CROP_WIDTH;
 int CROP_HEIGHT;
 int VIRTUAL_WIDTH;
-int retrow=400; 
-int retroh=300;
+int retrow=336; 
+int retroh=240;
 
 #define RETRO_DEVICE_ATARI_KEYBOARD RETRO_DEVICE_SUBCLASS(RETRO_DEVICE_KEYBOARD, 0)
 #define RETRO_DEVICE_ATARI_JOYSTICK RETRO_DEVICE_SUBCLASS(RETRO_DEVICE_JOYPAD, 1)
@@ -65,19 +65,19 @@ void retro_set_environment(retro_environment_t cb)
    environ_cb = cb;
 
   static const struct retro_controller_description p1_controllers[] = {
-    { "ATARI Joystick", RETRO_DEVICE_ATARI_JOYSTICK },
+    { "ATARI Joystick", RETRO_DEVICE_JOYPAD },
     { "ATARI Keyboard", RETRO_DEVICE_ATARI_KEYBOARD },
   };
   static const struct retro_controller_description p2_controllers[] = {
-    { "ATARI Joystick", RETRO_DEVICE_ATARI_JOYSTICK },
+    { "ATARI Joystick", RETRO_DEVICE_JOYPAD },
     { "ATARI Keyboard", RETRO_DEVICE_ATARI_KEYBOARD },
   };
   static const struct retro_controller_description p3_controllers[] = {
-    { "ATARI Joystick", RETRO_DEVICE_ATARI_JOYSTICK },
+    { "ATARI Joystick", RETRO_DEVICE_JOYPAD },
     { "ATARI Keyboard", RETRO_DEVICE_ATARI_KEYBOARD },
   };
   static const struct retro_controller_description p4_controllers[] = {
-    { "ATARI Joystick", RETRO_DEVICE_ATARI_JOYSTICK },
+    { "ATARI Joystick", RETRO_DEVICE_JOYPAD },
     { "ATARI Keyboard", RETRO_DEVICE_ATARI_KEYBOARD },
   };
 
@@ -94,7 +94,7 @@ void retro_set_environment(retro_environment_t cb)
    struct retro_variable variables[] = {
      {
        "atari800_system",
-       "Atari System; 400/800 (OS B)|800XL (64K)|130XE (128K)|5200",
+       "Atari System; 5200",
      },
      {
        "atari800_ntscpal",
@@ -126,7 +126,7 @@ void retro_set_environment(retro_environment_t cb)
 	  },
       {
          "atari800_resolution",
-         "Internal resolution; 336x240|320x240|384x240|384x272|384x288|400x300",
+         "Internal resolution; 336x240",
       },
      {
        "atari800_keyboard",
@@ -188,10 +188,15 @@ static void update_variables(void)
    }
 
    var.key = "atari800_system";
-   var.value = NULL;
+   //var.value = NULL;
+   var.value = "5200";
+   
 
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   //if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   if (var.value)
      {
+
+       Log_print("Atari System: %s", var.value);
        if (strcmp(var.value, "400/800 (OS B)") == 0)
 	 {
 	   Atari800_machine_type = Atari800_MACHINE_800;
@@ -696,8 +701,12 @@ bool retro_load_game(const struct retro_game_info *info)
    environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
 
    full_path = info->path;
+  
+   
 
    strcpy(RPATH,full_path);
+
+   Log_print("Load game: info path: %s", RPATH);
 
    update_variables();
 
